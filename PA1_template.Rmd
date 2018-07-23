@@ -1,25 +1,110 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+#Reproducible Research - Coursera
+##Assignment - 1
+***
+###Loading and preprocessing the data
+
+The data is loaded using 'read.csv'.
+```{r read}
+x <- read.csv("activity.csv")
+```
+
+The date column was changed from factor class to date class.
+```{r transform}
+x$date <- as.Date(as.character(x$date))
+```
+***
+###What is mean total number of steps taken per day?
+
+The subset of the initial dataframe which does not have NA's in the steps column.
+```{r subset}
+x_new <- x[!is.na(x$steps),]
+```
+
+Calcutale the total number of steps taken per day.
+```{r average_x}
+x_sum <- tapply(x_new$steps, x_new$date, sum)
+```
+
+Histogram(not barplot) plot of total number of steps taken per day.
+```{r plot1}
+hist(x_sum, xlab = "Days", main = "Total number of steps taken each day")
+```
+
+Caculating the mean and median of the total number of steps taken per day.
+```{r x_mean_median}
+x_mean <- mean(x_sum)
+x_median <- median(x_sum)
+```
+
+Mean is `r x_mean` and median is `r x_median`.
+
+***
+###What is the average daily activity pattern?
+Average number of strps taken across all days in a given 5-minute interval. And a new variable 'intervals' which stores the intervals.
+```{r intervalaverage}
+x_avg <- tapply(x_new$steps, x_new$interval, mean)
+intervals <- as.numeric(levels(factor(x_new$interval)))
+```
+
+Time series plot of the above:
+```{r plot2}
+plot(intervals, x_avg, type = "l", xlab = "Interval", ylab = "Average number of steps", main = "Average number of steps in each interval")
+```
+
+Max number of steps taken across all days in the 5-minutes interval.
+```{r maxsteps}
+max_step <- intervals[which(x_avg == max(x_avg))]
+```
+Max number of steps taken is `r max_step`.
+
+***
+###Imputing missing values
+Calculating total number of missing values.
+```{r missingnumber}
+missing <- sum(is.na(x$steps))
+```
+Total number of missing values are `r missing`.
+
+I am using the mean of 5-minutes interval average to fill in the missing values in steps.
+
+The new dataset 'y' is made.
+```{r newdataset}
+y <- x
+y[which(is.na(x$steps)),]$steps <- x_avg
+```
+
+Time series plot of total number of steps taken each day of the new dataset.
+```{r average_y}
+y_sum <- tapply(y$steps, y$date, sum)
+hist(y_sum, xlab = "Days", main = "Total number of steps taken each day")
+```
+
+Calculating mean and median of the new dataset.
+```{r y_mean_median}
+y_mean <- mean(y_sum)
+y_median <- median(y_sum)
+```
+
+The new mean is `r y_mean` which is equal to the old mean `r x_mean`, therefore there is no change in the mean of the data.
 
 
-## Loading and preprocessing the data
+The new median is `r y_median` which is greater than the old mean `r x_median`.
 
+***
+###Are there differences in activity patterns between weekdays and weekends?
+Creating a new variable for the dataset named 'day' which stores whether the day is 'weekday' or 'weekend'.
+```{r day}
+x_new$day <- ""
+x_new[grep("S(at|un)", weekdays(x_new$date)),]$day <- "weekend"
+x_new[!(x_new$day == "weekend"),]$day <- "weekday"
+x_new$day <- factor(x_new$day, levels = c("weekend","weekday"))
+```
 
-
-## What is mean total number of steps taken per day?
-
-
-
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
+Panel plot of average number of steps taken on all weekdays or weekend days.
+```{r plot3}
+par(mfrow = c(1,2))
+x_avg_weekday <- tapply(x_new[x_new$day %in% "weekday",]$steps, x_new[x_new$day %in% "weekday",]$interval, mean)
+x_avg_weekend <- tapply(x_new[x_new$day %in% "weekend",]$steps, x_new[x_new$day %in% "weekend",]$interval, mean)
+plot(intervals, x_avg_weekday, type = "l", xlab = "Interval", ylab = "Average number of steps", main = "Weekdays", ylim = c(0,250))
+plot(intervals, x_avg_weekend, type = "l", xlab = "Interval", ylab = "Average number of steps", main = "Weekends", ylim = c(0,250))
+```
