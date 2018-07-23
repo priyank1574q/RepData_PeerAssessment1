@@ -1,4 +1,4 @@
-# Reproducible Research - Coursera  
+# Coursera - Data Science - Reproducible Research
 ## Assignment - 1  
 ***
 ### Loading and preprocessing the data  
