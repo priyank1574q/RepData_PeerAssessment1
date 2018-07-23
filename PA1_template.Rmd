@@ -1,7 +1,7 @@
-#Reproducible Research - Coursera
-##Assignment - 1
+#Reproducible Research - Coursera  
+##Assignment - 1  
 ***
-###Loading and preprocessing the data
+###Loading and preprocessing the data  
 
 The data is loaded using 'read.csv'.
 ```{r read}
@@ -13,7 +13,7 @@ The date column was changed from factor class to date class.
 x$date <- as.Date(as.character(x$date))
 ```
 ***
-###What is mean total number of steps taken per day?
+###What is mean total number of steps taken per day?  
 
 The subset of the initial dataframe which does not have NA's in the steps column.
 ```{r subset}
@@ -39,7 +39,7 @@ x_median <- median(x_sum)
 Mean is `r x_mean` and median is `r x_median`.
 
 ***
-###What is the average daily activity pattern?
+###What is the average daily activity pattern?  
 Average number of strps taken across all days in a given 5-minute interval. And a new variable 'intervals' which stores the intervals.
 ```{r intervalaverage}
 x_avg <- tapply(x_new$steps, x_new$interval, mean)
@@ -58,7 +58,7 @@ max_step <- intervals[which(x_avg == max(x_avg))]
 Max number of steps taken is `r max_step`.
 
 ***
-###Imputing missing values
+###Imputing missing values  
 Calculating total number of missing values.
 ```{r missingnumber}
 missing <- sum(is.na(x$steps))
@@ -91,7 +91,7 @@ The new mean is `r y_mean` which is equal to the old mean `r x_mean`, therefore 
 The new median is `r y_median` which is greater than the old mean `r x_median`.
 
 ***
-###Are there differences in activity patterns between weekdays and weekends?
+###Are there differences in activity patterns between weekdays and weekends?  
 Creating a new variable for the dataset named 'day' which stores whether the day is 'weekday' or 'weekend'.
 ```{r day}
 x_new$day <- ""
